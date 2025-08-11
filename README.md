@@ -11,7 +11,7 @@
 <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis">
 <img src="https://img.shields.io/badge/WebSockets-004A7F?style=for-the-badge&logo=websocket&logoColor=white" alt="WebSockets">
 </p>
-
+</div>
 ---
 
 ## 🚀 Overview
