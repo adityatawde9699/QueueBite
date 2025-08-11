@@ -1,30 +1,95 @@
 <div align="center">
-<!-- This is the main social preview image -->
-<a href="https://www.google.com/search?q=https://github.com/your-username/queuebite">
-<img src="social-preview.png" alt="QueueBite - Smart Canteen Queue Management System">
-</a>
-<br />
-<h1>
-QueueBite
-</h1>
-<p>
-<b>A real-time, smart queue management system for canteens. Order ahead, skip the line, and enjoy your meal! 🍔</b>
-</p>
-<!-- Badges/Shields -->
-<p>
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/React-61DAFB%3Fstyle%3Dfor-the-badge%26logo%3Dreact%26logoColor%3Dblack](https://tse2.mm.bing.net/th/id/OIP.uFOBJcuykRSmIGLYKyyGHgHaFP?cb=thfc1&w=1024&h=724&rs=1&pid=ImgDetMain&o=7&rm=3" alt="React">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Django-092E20%3Fstyle%3Dfor-the-badge%26logo%3Ddjango%26logoColor%3Dwhite](https://static.djangoproject.com/img/logos/django-logo-negative.1d528e2cb5fb.png" alt="Django">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/Socket.io-010101%3Fstyle%3Dfor-the-badge%26logo%3Dsocket.io%26logoColor%3Dwhite" alt="Socket.io">
-<img src="https://www.google.com/search?q=https://img.shields.io/badge/PostgreSQL-4169E1%3Fstyle%3Dfor-the-badge%26logo%3Dpostgresql%26logoColor%3Dwhite" alt="PostgreSQL">
-</p>
+<img src="social-preview.png" alt="QueueBite Social Preview Banner">
+<h1>QueueBite</h1>
+<p><b>Order ahead, skip the line, and enjoy your meal! 🍔</b></p>
 
 <p>
 <a href="#-key-features">Key Features</a> •
 <a href="#-technology-stack">Tech Stack</a> •
 <a href="#-getting-started">Getting Started</a> •
-<a href="#-system-flow">System Flow</a>
+<a href="#-system-flow">System Flow</a> •
+<a href="#-contributing">Contributing</a>
 </p>
 </div>
 
-🚀 Overview
-(Your README content starts here...)
+---
+
+## 🚀 Overview
+QueueBite is a real-time, smart queue management system designed to eliminate long waits and streamline the canteen experience at colleges and corporate offices. It allows users to place food orders from their devices, receive a digital token, and get notified when their meal is ready for pickup.  
+This system empowers canteen owners to manage incoming orders efficiently through a live dashboard, improving overall workflow and customer satisfaction.
+
+---
+
+## ✨ Key Features
+
+### For Customers
+- 📱 **Mobile-First Ordering:** Responsive UI to easily browse the menu and place orders.
+- 🔄 **Real-Time Queue Updates:** See the live status of your order without refreshing the page.
+- 🎟️ **Digital Tokens:** Receive a unique digital token for every order.
+- 🔔 **Pickup Notifications:** Get notified the moment your order is marked as "Ready".
+- 👤 **User Profiles:** Track order history and manage your profile.
+
+### For Canteen Staff/Admin
+- 🧑‍🍳 **Live Order Dashboard:** View and manage all incoming orders in a Kanban-style interface ("Pending", "In Progress", "Ready").
+- 📊 **Dashboard Analytics:** Get insights into sales, peak hours, and most popular items.
+- ⚙️ **Menu Management:** Easily add, update, or remove food items from the menu.
+- 🔐 **Role-Based Access:** Secure login for staff members with specific permissions.
+
+---
+
+## 🛠️ Technology Stack
+
+| Frontend | Backend | Real-Time |
+|----------|---------|-----------|
+| React.js | Django  | Socket.IO |
+| TailwindCSS | Django REST Framework | Redis |
+| Axios | PostgreSQL | WebSockets |
+
+---
+
+## ⚙️ Getting Started
+
+To get a local copy up and running, follow these simple steps.
+
+### **Prerequisites**
+- Python 3.10+
+- Node.js v18+ & npm
+- PostgreSQL & Redis installed and running
+
+---
+
+### **Installation**
+
+#### 1️⃣ Clone the repository
+```bash
+git clone https://github.com/your-username/queuebite.git
+cd queuebite
+
+cd backend
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver
+
+cd ../frontend
+npm install
+npm run dev
+```
+🔄 System Flow
+1. Customer logs in and places an order via the React frontend.
+      │
+      └─> API Request to Django (POST /api/orders/place/)
+            │
+            ├─> 2. Django saves the order to the PostgreSQL database.
+            │
+            └─> 3. Django emits a 'new_order' event via Socket.IO.
+                  │
+                  ├─> 4. Canteen Staff Dashboard instantly receives the event and displays the new order.
+                  │
+                  └─> 5. All connected Customers see the live queue update with the new token.
+
+When staff updates the order status, steps 3–5 are repeated for the 'order_update' event.
+
+📜 License
+This project is licensed under the MIT License - see the LICENSE file for details.
