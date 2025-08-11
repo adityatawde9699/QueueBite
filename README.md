@@ -77,6 +77,7 @@ npm install
 npm run dev
 ```
 🔄 System Flow
+```bash
 1. Customer logs in and places an order via the React frontend.
       │
       └─> API Request to Django (POST /api/orders/place/)
@@ -90,6 +91,7 @@ npm run dev
                   └─> 5. All connected Customers see the live queue update with the new token.
 
 When staff updates the order status, steps 3–5 are repeated for the 'order_update' event.
+```
 
 📜 License
 This project is licensed under the MIT License - see the LICENSE file for details.
