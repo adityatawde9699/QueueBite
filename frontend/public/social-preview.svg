@@ -61,8 +61,8 @@
 
         <!-- Socket.IO -->
         <g transform="translate(400, 0)">
-            <circle cx="25" cy="25" r="25" fill="#010101"/>
-            <path d="M25 10 L27 23 L40 25 L27 27 L25 40 L23 27 L10 25 L23 23 Z" fill="white"/>
+             <circle cx="16" cy="16" r="16" fill="#010101"/>
+            <path d="M16.5 4L14.5 13L18.5 15L13.5 28L16.5 19L12.5 17L16.5 4Z" fill="white"/>
         </g>
 
         <!-- PostgreSQL -->
