@@ -1,7 +1,7 @@
 <div align="center">
 <!-- This is the main social preview image -->
 <a href="https://www.google.com/search?q=https://github.com/your-username/queuebite">
-<img src="https://www.google.com/search?q=https://raw.githubusercontent.com/your-username/queuebite/main/social-preview.png" alt="QueueBite - Smart Canteen Queue Management System">
+<img src="social-preview.png" alt="QueueBite - Smart Canteen Queue Management System">
 </a>
 
 <br />
