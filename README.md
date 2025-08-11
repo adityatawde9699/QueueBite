@@ -2,6 +2,16 @@
 <img src="social-preview.png" alt="QueueBite Social Preview Banner">
 <h1>QueueBite</h1>
 <p><b>Order ahead, skip the line, and enjoy your meal! 🍔</b></p>
+<p>
+<img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React">
+<img src="https://img.shields.io/badge/Django-092E20?style=for-the-badge&logo=django&logoColor=white" alt="Django">
+<img src="https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white" alt="Socket.io">
+<img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
+<img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS">
+<img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis">
+<img src="https://img.shields.io/badge/WebSockets-004A7F?style=for-the-badge&logo=websocket&logoColor=white" alt="WebSockets">
+</p>
+
 ---
 
 ## 🚀 Overview
