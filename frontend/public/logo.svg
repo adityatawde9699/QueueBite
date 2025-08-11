@@ -1,0 +1,11 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="60" fill="white"/>
+  <g transform="translate(10, 5)">
+    <path d="M15 2C13.9 2 13 2.9 13 4V20C13 21.1 13.9 22 15 22H17C18.1 22 19 21.1 19 20V4C19 2.9 18.1 2 17 2H15ZM15 4H17V10H15V4Z" fill="#2c3e50"/>
+    <path d="M9 4V10H11V4C11 2.9 10.1 2 9 2C7.9 2 7 2.9 7 4V20C7 21.1 7.9 22 9 22H11C12.1 22 13 21.1 13 20V12H9V20H7C5.9 20 5 19.1 5 18V4C5 2.9 5.9 2 7 2H9Z" fill="#2c3e50"/>
+     <path d="M21 4V10H23V4C23 2.9 22.1 2 21 2C19.9 2 19 2.9 19 4V20C19 21.1 19.9 22 21 22H23C24.1 22 25 21.1 25 20V4C25 2.9 24.1 2 23 2H21Z" fill="#337c7b"/>
+  </g>
+  <text x="50" y="38" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#2c3e50">
+    Queue<tspan fill="#337c7b">Bite</tspan>
+  </text>
+</svg>

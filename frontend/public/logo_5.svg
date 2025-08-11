@@ -1,0 +1,15 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="200" height="60" fill="white"/>
+  <g transform="translate(12, 12)">
+    <path d="M2 2H38V12H2V2Z" fill="#337c7b"/>
+    <rect x="2" y="16" width="36" height="4" fill="#bdc3c7"/>
+    <rect x="2" y="24" width="28" height="4" fill="#bdc3c7"/>
+    <rect x="2" y="32" width="36" height="4" fill="#bdc3c7"/>
+    <path d="M2 40H8V44H2V40Z" fill="#ea445a"/>
+    <path d="M10 40H16V44H10V40Z" fill="#ea445a"/>
+    <path d="M18 40H24V44H18V40Z" fill="#ea445a"/>
+  </g>
+  <text x="60" y="38" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#2c3e50">
+    Queue<tspan fill="#337c7b">Bite</tspan>
+  </text>
+</svg>

@@ -1,0 +1,83 @@
+.queue-card {
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-left: 5px solid;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.queue-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.card-main-content {
+    padding: 1.25rem;
+    flex-grow: 1;
+}
+
+.order-token-display {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #1a202c;
+  margin-bottom: 0.5rem;
+}
+
+.order-status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+
+.order-items-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  color: #4a5568;
+}
+
+.order-items-list li {
+  padding: 0.2rem 0;
+}
+
+/* Status-specific styles */
+.queue-card.status-pending { border-color: #f59e0b; } /* amber-500 */
+.status-pending { background-color: #fffbeb; color: #b45309; } /* amber-50, amber-700 */
+
+.queue-card.status-in-progress { border-color: #3b82f6; } /* blue-500 */
+.status-in-progress { background-color: #eff6ff; color: #1d4ed8; } /* blue-50, blue-700 */
+
+.queue-card.status-ready { border-color: #22c55e; } /* green-500 */
+.status-ready { background-color: #f0fdf4; color: #166534; } /* green-50, green-800 */
+
+
+/* Action Panel */
+.card-action-panel {
+    padding: 0 1.25rem 1.25rem;
+}
+
+.action-button {
+    width: 100%;
+    border: none;
+    padding: 0.7rem;
+    border-radius: 6px;
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.action-start { background-color: #3b82f6; }
+.action-start:hover { background-color: #2563eb; }
+
+.action-ready { background-color: #22c55e; }
+.action-ready:hover { background-color: #16a34a; }
+
+.action-serve { background-color: #6b7280; }
+.action-serve:hover { background-color: #4b5563; }
