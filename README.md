@@ -2,16 +2,6 @@
 <img src="social-preview.png" alt="QueueBite Social Preview Banner">
 <h1>QueueBite</h1>
 <p><b>Order ahead, skip the line, and enjoy your meal! 🍔</b></p>
-
-<p>
-<a href="#-key-features">Key Features</a> •
-<a href="#-technology-stack">Tech Stack</a> •
-<a href="#-getting-started">Getting Started</a> •
-<a href="#-system-flow">System Flow</a> •
-<a href="#-contributing">Contributing</a>
-</p>
-</div>
-
 ---
 
 ## 🚀 Overview
