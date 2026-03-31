@@ -5,7 +5,13 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("QueueBite API is running successfully.")
+
 urlpatterns = [
+    path('', home, name='home'),
     path('admin/', admin.site.urls),
     # API URLs
     path('api/auth/', include('orders.urls')),
