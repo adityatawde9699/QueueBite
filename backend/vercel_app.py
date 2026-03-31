@@ -17,21 +17,26 @@ django.setup()
 try:
     from django.core.management import call_command
     from django.db import connection
-    from django.db.utils import OperationalError
+    from django.db.utils import OperationalError, ProgrammingError
     
-    # Test database connection
+    # Always attempt to run migrations on startup (ensures Profile table exists)
     try:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT 1")
-    except OperationalError:
-        # Database not initialized, run migrations
-        print("Initializing database...")
-        call_command('migrate', verbosity=0)
-        # Seed initial data
-        call_command('seed_menu', verbosity=0)
+        print("Running migrations...")
+        call_command('migrate', verbosity=0, interactive=False)
+        print("Migrations completed successfully.")
+        
+        # Seed initial data if no canteens exist
+        from orders.models import Canteen
+        if Canteen.objects.count() == 0:
+            print("Seeding menu data...")
+            call_command('seed_menu', verbosity=0)
+            print("Menu seed completed.")
+    except Exception as init_error:
+        print(f"Error during initialization: {init_error}")
+        # App can still run, but with limited functionality
 except Exception as e:
     # Log error but don't crash - the app can still run
-    print(f"Warning during initialization: {e}")
+    print(f"Warning during initialization setup: {e}")
 
 # Create the WSGI application
 app = get_wsgi_application()
