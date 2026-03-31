@@ -1,42 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
+import queueService from '../services/queueService';
 import './CanteenPage.css';
-// Mock data for demonstration
-const mockMenuItems = [
-  { id: 1, name: 'Samosa', price: 15, image: 'https://bing.com/th?id=OSK.10206e70a525128cad7cef13d2e254c4' },
-  { id: 2, name: 'Vada Pav', price: 20, image: 'https://tse1.mm.bing.net/th/id/OIP.DNxwrECi6nlQ1iF4WjrkkAHaFj?cb=thfc1&rs=1&pid=ImgDetMain&o=7&rm=3' },
-  { id: 3, name: 'Masala Dosa', price: 60, image: 'https://thf.bing.com/th/id/OIP.Q5vy3i2Sojv9sZE9SSsiOQHaE4?w=271&h=180&c=7&r=0&o=7&cb=thfc1&pid=1.7&rm=3' },
-  { id: 4, name: 'Sandwich', price: 70, image: 'https://thf.bing.com/th/id/OIP.gYoYdZQhus3i-y_D5aoBlwHaE7?w=234&h=180&c=7&r=0&o=7&cb=thfc1&pid=1.7&rm=3' },
-  { id: 5, name: 'Veg Biryani', price: 180, image: 'https://thf.bing.com/th/id/OIP.V0o4wDz9TVqg75CRCwbT9QHaFO?w=251&h=180&c=7&r=0&o=7&cb=thfc1&pid=1.7&rm=3' },
-  { id: 6, name: 'Coffee', price: 125, image: 'https://thf.bing.com/th/id/OIP.Dbh6OaBMj-2FN4i0LRKA7gHaFj?w=251&h=188&c=7&r=0&o=7&cb=thfc1&pid=1.7&rm=3' },
-];
 
 const CanteenPage = () => {
+  const [menuItems, setMenuItems] = useState([]);
   const [queue, setQueue] = useState([]);
   const [cart, setCart] = useState([]);
   const [yourToken, setYourToken] = useState(null);
+  const [error, setError] = useState(null);
 
-  // Effect to connect to Socket.IO and listen for queue updates
+  const fetchMenu = async () => {
+    try {
+      const res = await queueService.getMenu();
+      setMenuItems(res.data);
+    } catch (err) {
+      console.error('Failed to fetch menu items', err);
+      setError('Could not load menu. Please refresh.');
+    }
+  };
+
+  const fetchQueue = async () => {
+    try {
+      const res = await queueService.getQueue();
+      setQueue(res.data);
+    } catch (err) {
+      console.error('Failed to fetch queue', err);
+      setError('Could not load live queue.');
+    }
+  };
+
   useEffect(() => {
-    // Replace with your actual backend server URL
-    const socket = io('http://localhost:8000');
+    fetchMenu();
+    fetchQueue();
 
-    socket.on('connect', () => {
-      console.log('Connected to WebSocket server');
-    });
-
-    socket.on('queue_update', (updatedQueue) => {
-      setQueue(updatedQueue);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('Disconnected from WebSocket server');
-    });
-
-    // Clean up the socket connection when the component unmounts
-    return () => {
-      socket.disconnect();
-    };
+    const interval = setInterval(fetchQueue, 12000); // Poll every 12 seconds
+    return () => clearInterval(interval);
   }, []);
 
   const addToCart = (item) => {
@@ -51,23 +49,37 @@ const CanteenPage = () => {
     });
   };
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (cart.length === 0) {
       alert('Your cart is empty!');
       return;
     }
-    // This is where you would typically send the order to the backend via API
-    console.log('Placing order:', cart);
-    // For demonstration, we'll generate a random token
-    const newToken = `T#${Math.floor(100 + Math.random() * 900)}`;
-    setYourToken(newToken);
-    alert(`Your order has been placed! Your token is: ${newToken}`);
-    setCart([]); // Clear the cart after placing order
+
+    if (!menuItems.length) {
+      alert('Menu data not available. Please refresh.');
+      return;
+    }
+
+    // Use first menu item's canteen (assumes single canteen support)
+    const canteen_id = cart[0].canteen;
+    const items = cart.map((c) => ({ menu_item_id: c.id, quantity: c.quantity }));
+
+    try {
+      const res = await queueService.placeOrder({ canteen_id, items });
+      setYourToken(res.data.token);
+      setCart([]);
+      alert(`Order placed successfully! Your token is ${res.data.token}`);
+      fetchQueue();
+    } catch (err) {
+      console.error('Error placing order:', err);
+      alert(err.response?.data?.error || 'Failed to place order.');
+    }
   };
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
   };
+
 
   return (
     <div className="canteen-page">
@@ -75,19 +87,25 @@ const CanteenPage = () => {
         {/* Menu Section */}
         <section className="menu-section">
           <h1 className="section-title">Today's Menu</h1>
+          {error && <p className="error-text">{error}</p>}
           <div className="menu-grid">
-            {mockMenuItems.map((item) => (
-              <div key={item.id} className="menu-item-card">
-                <img src={item.image} alt={item.name} className="menu-item-image" />
-                <div className="menu-item-details">
-                  <h3 className="menu-item-name">{item.name}</h3>
-                  <p className="menu-item-price">₹{item.price.toFixed(2)}</p>
+            {menuItems.length === 0 ? (
+              <p>Loading menu...</p>
+            ) : (
+              menuItems.map((item) => (
+                <div key={item.id} className="menu-item-card">
+                  {item.image && <img src={item.image} alt={item.name} className="menu-item-image" />}
+                  <div className="menu-item-details">
+                    <h3 className="menu-item-name">{item.name}</h3>
+                    <p className="menu-item-price">₹{parseFloat(item.price).toFixed(2)}</p>
+                    <p className="menu-item-desc">{item.description}</p>
+                  </div>
+                  <button className="add-to-cart-btn" onClick={() => addToCart(item)}>
+                    Add to Cart
+                  </button>
                 </div>
-                <button className="add-to-cart-btn" onClick={() => addToCart(item)}>
-                  Add to Cart
-                </button>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </section>
 

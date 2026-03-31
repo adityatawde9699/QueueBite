@@ -1,14 +1,19 @@
 import api from './api';
 
+// Fetch menu items
+const getMenu = () => {
+  return api.get('/menu/');
+};
+
 // Fetch all orders for the live queue
 const getQueue = () => {
   return api.get('/orders/queue/');
 };
 
 // Place a new order
-const placeOrder = (orderData) => {
-  // orderData should be an array of { menu_item_id: X, quantity: Y }
-  return api.post('/orders/place/', { items: orderData });
+const placeOrder = ({ canteen_id, items }) => {
+  // items should be an array of { menu_item_id: X, quantity: Y }
+  return api.post('/orders/place/', { canteen_id, items });
 };
 
 // Fetch a specific user's active order
@@ -18,10 +23,11 @@ const getMyOrder = () => {
 
 // Update an order's status (for staff)
 const updateOrderStatus = (orderId, status) => {
-  return api.patch(`/orders/update-status/${orderId}/`, { status });
+  return api.patch(`/orders/${orderId}/status/`, { status });
 };
 
 const queueService = {
+  getMenu,
   getQueue,
   placeOrder,
   getMyOrder,

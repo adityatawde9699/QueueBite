@@ -1,42 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import io from 'socket.io-client';
 import QueueCard from '../components/QueueCard.jsx';
 import Loader from '../components/Loader.jsx';
+import queueService from '../services/queueService';
 import './OrderQueue.css';
-
-// Mock data for demonstration
-const mockUserOrder = { id: 103, token: 'T#503', status: 'In Progress', items: ['Masala Dosa x1', 'Coffee x1'] };
 
 const OrderQueue = () => {
   const [liveQueue, setLiveQueue] = useState([]);
-  const [myOrder, setMyOrder] = useState(mockUserOrder);
+  const [myOrder, setMyOrder] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      const [queueResp, myOrderResp] = await Promise.all([queueService.getQueue(), queueService.getMyOrder()]);
+      setLiveQueue(queueResp.data);
+      setMyOrder(myOrderResp.data);
+    } catch (err) {
+      console.error('Failed to fetch order data', err);
+      setError('Unable to fetch queue data right now.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    // Simulate fetching initial data with a longer delay
-    setTimeout(() => {
-        // In a real app, you'd fetch this from your backend
-        setLiveQueue([
-            { id: 103, token: 'T#503', status: 'In Progress', items: ['Masala Dosa x1', 'Coffee x1'] },
-            { id: 104, token: 'T#504', status: 'In Progress', items: ['Veg Biryani x2'] },
-            { id: 105, token: 'T#505', status: 'Ready', items: ['Chole Bhature x1'] },
-        ]);
-        setIsLoading(false);
-    }, 3000); // Increased to 3 seconds
-
-    const socket = io('http://localhost:8000');
-
-    socket.on('queue_update', (updatedQueue) => {
-      setLiveQueue(updatedQueue);
-      // Check if the user's order status has changed
-      const updatedUserOrder = updatedQueue.find(order => order.id === myOrder.id);
-      if (updatedUserOrder) {
-        setMyOrder(updatedUserOrder);
-      }
-    });
-
-    return () => socket.disconnect();
-  }, [myOrder.id]);
+    fetchData();
+    const interval = setInterval(fetchData, 13000);
+    return () => clearInterval(interval);
+  }, []);
 
   if (isLoading) {
     return <Loader />;
@@ -47,6 +38,7 @@ const OrderQueue = () => {
       <div className="page-container">
         <section className="my-order-section">
           <h2>Your Order Status</h2>
+          {error && <p className="error-text">{error}</p>}
           {myOrder ? (
             <QueueCard order={myOrder} />
           ) : (
@@ -60,7 +52,7 @@ const OrderQueue = () => {
             <div className="queue-column-wrapper">
               <h3>In Progress</h3>
               <div className="queue-list">
-                {liveQueue.filter(o => o.status === 'In Progress').map(order => (
+                {liveQueue.filter((o) => o.status === 'In Progress').map((order) => (
                   <QueueCard key={order.id} order={order} />
                 ))}
               </div>
@@ -68,7 +60,7 @@ const OrderQueue = () => {
             <div className="queue-column-wrapper">
               <h3>Ready for Pickup</h3>
               <div className="queue-list">
-                {liveQueue.filter(o => o.status === 'Ready').map(order => (
+                {liveQueue.filter((o) => o.status === 'Ready').map((order) => (
                   <QueueCard key={order.id} order={order} />
                 ))}
               </div>

@@ -1,21 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import queueService from '../services/queueService';
 import './PlaceOrder.css';
 
-// Mock data, same as CanteenPage
-const mockMenuItems = [
-  { id: 1, name: 'Samosa', price: 15, category: 'Snacks' },
-  { id: 2, name: 'Vada Pav', price: 20, category: 'Snacks' },
-  { id: 3, name: 'Masala Dosa', price: 50, category: 'Main Course' },
-  { id: 4, name: 'Chole Bhature', price: 70, category: 'Main Course' },
-  { id: 5, name: 'Veg Biryani', price: 80, category: 'Main Course' },
-  { id: 6, name: 'Coffee', price: 25, category: 'Beverages' },
-  { id: 7, name: 'Tea', price: 15, category: 'Beverages' },
-];
-
 const PlaceOrder = () => {
+  const [menuItems, setMenuItems] = useState([]);
   const [cart, setCart] = useState([]);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const fetchMenu = async () => {
+    try {
+      const res = await queueService.getMenu();
+      setMenuItems(res.data);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to load menu.');
+    }
+  };
+
+  useEffect(() => {
+    fetchMenu();
+  }, []);
 
   const handleAddToCart = (item) => {
     setCart((prevCart) => {
@@ -30,57 +37,92 @@ const PlaceOrder = () => {
   };
 
   const handleRemoveFromCart = (itemId) => {
-      setCart(cart.filter(item => item.id !== itemId));
-  }
+    setCart((prevCart) => prevCart.filter((item) => item.id !== itemId));
+  };
 
   const updateQuantity = (itemId, amount) => {
-      setCart(cart.map(item => {
+    setCart((prevCart) =>
+      prevCart
+        .map((item) => {
           if (item.id === itemId) {
-              const newQuantity = item.quantity + amount;
-              return newQuantity > 0 ? {...item, quantity: newQuantity} : null;
+            const newQuantity = item.quantity + amount;
+            return newQuantity > 0 ? { ...item, quantity: newQuantity } : null;
           }
           return item;
-      }).filter(Boolean)); // filter(Boolean) removes null items
-  }
+        })
+        .filter(Boolean)
+    );
+  };
 
   const getTotalPrice = () => {
     return cart.reduce((total, item) => total + item.price * item.quantity, 0).toFixed(2);
   };
 
-  const handlePlaceOrder = () => {
+  const handlePlaceOrder = async () => {
     if (cart.length === 0) {
       alert('Your cart is empty!');
       return;
     }
-    // In a real app, you would post the cart to your backend API
-    console.log('Order placed:', cart);
-    alert('Order successfully placed! You will be redirected to the queue.');
-    navigate('/order-queue'); // Redirect to the queue page
+
+    if (!menuItems.length) {
+      alert('Menu not loaded yet. Please try again later.');
+      return;
+    }
+
+    const canteen_id = cart[0]?.canteen;
+    if (!canteen_id) {
+      alert('Invalid canteen selected.');
+      return;
+    }
+
+    const orderPayload = {
+      canteen_id,
+      items: cart.map((item) => ({ menu_item_id: item.id, quantity: item.quantity })),
+    };
+
+    setLoading(true);
+    try {
+      await queueService.placeOrder(orderPayload);
+      alert('Order successfully placed!');
+      navigate('/order-queue');
+    } catch (err) {
+      console.error('Place order failed', err);
+      alert(err.response?.data?.error || 'Failed to place order.');
+    } finally {
+      setLoading(false);
+    }
   };
-  
-  const menuByCategory = mockMenuItems.reduce((acc, item) => {
-      (acc[item.category] = acc[item.category] || []).push(item);
-      return acc;
+
+  const menuByCategory = menuItems.reduce((acc, item) => {
+    const category = item.canteen || 'general';
+    (acc[category] = acc[category] || []).push(item);
+    return acc;
   }, {});
 
   return (
     <div className="place-order-layout">
       <div className="menu-container">
         <h1>Place Your Order</h1>
-        {Object.entries(menuByCategory).map(([category, items]) => (
-            <div key={category} className="category-section">
-                <h2>{category}</h2>
-                <div className="menu-items-grid">
-                    {items.map(item => (
-                        <div key={item.id} className="food-card">
-                            <h3>{item.name}</h3>
-                            <p>₹{item.price.toFixed(2)}</p>
-                            <button onClick={() => handleAddToCart(item)}>Add</button>
-                        </div>
-                    ))}
-                </div>
+        {error && <p className="error-text">{error}</p>}
+        {menuItems.length === 0 ? (
+          <p>Loading menu...</p>
+        ) : (
+          Object.entries(menuByCategory).map(([canteen, items]) => (
+            <div key={canteen} className="category-section">
+              <h2>{`Canteen ${canteen}`}</h2>
+              <div className="menu-items-grid">
+                {items.map((item) => (
+                  <div key={item.id} className="food-card">
+                    <h3>{item.name}</h3>
+                    <p>₹{parseFloat(item.price).toFixed(2)}</p>
+                    <p>{item.description}</p>
+                    <button onClick={() => handleAddToCart(item)}>Add</button>
+                  </div>
+                ))}
+              </div>
             </div>
-        ))}
+          ))
+        )}
       </div>
 
       <div className="cart-summary-container">
@@ -90,13 +132,13 @@ const PlaceOrder = () => {
         ) : (
           <>
             <ul className="cart-summary-list">
-              {cart.map(item => (
+              {cart.map((item) => (
                 <li key={item.id}>
                   <span className="item-name">{item.name}</span>
                   <div className="quantity-controls">
-                      <button onClick={() => updateQuantity(item.id, -1)}>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => updateQuantity(item.id, 1)}>+</button>
+                    <button onClick={() => updateQuantity(item.id, -1)}>-</button>
+                    <span>{item.quantity}</span>
+                    <button onClick={() => updateQuantity(item.id, 1)}>+</button>
                   </div>
                   <span className="item-total">₹{(item.price * item.quantity).toFixed(2)}</span>
                   <button className="remove-btn" onClick={() => handleRemoveFromCart(item.id)}>×</button>
@@ -107,8 +149,8 @@ const PlaceOrder = () => {
               <strong>Total:</strong>
               <strong>₹{getTotalPrice()}</strong>
             </div>
-            <button className="confirm-order-btn" onClick={handlePlaceOrder}>
-              Confirm & Place Order
+            <button className="confirm-order-btn" onClick={handlePlaceOrder} disabled={loading}>
+              {loading ? 'Placing order…' : 'Confirm & Place Order'}
             </button>
           </>
         )}
