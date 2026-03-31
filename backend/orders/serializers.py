@@ -49,6 +49,12 @@ class RegisterSerializer(serializers.ModelSerializer):
         Profile.objects.create(user=user, is_staff_member=is_staff_member)
         return user
 
+class MenuItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MenuItem
+        fields = ['id', 'canteen', 'name', 'description', 'price', 'is_available']
+
+
 class OrderItemSerializer(serializers.ModelSerializer):
     menu_item_name = serializers.CharField(source='menu_item.name', read_only=True)
 
@@ -56,6 +62,19 @@ class OrderItemSerializer(serializers.ModelSerializer):
         model = OrderItem
         fields = ['id', 'menu_item', 'menu_item_name', 'quantity', 'price_at_time_of_order']
 
+
+class OrderCreateItemSerializer(serializers.Serializer):
+    menu_item_id = serializers.IntegerField()
+    quantity = serializers.IntegerField(min_value=1)
+
+class OrderCreateSerializer(serializers.Serializer):
+    items = OrderCreateItemSerializer(many=True)
+    canteen_id = serializers.IntegerField()
+
+    def validate_items(self, value):
+        if not value:
+            raise serializers.ValidationError("Order must have at least one item.")
+        return value
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
