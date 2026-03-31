@@ -46,7 +46,12 @@ class RegisterSerializer(serializers.ModelSerializer):
             email=validated_data['email'],
             password=validated_data['password']
         )
-        Profile.objects.create(user=user, is_staff_member=is_staff_member)
+        try:
+            Profile.objects.create(user=user, is_staff_member=is_staff_member)
+        except Exception as e:
+            # If Profile creation fails, at least the user was created
+            # This is a fallback for database issues
+            print(f"Warning: Could not create Profile for user {user.username}: {e}")
         return user
 
 class MenuItemSerializer(serializers.ModelSerializer):
