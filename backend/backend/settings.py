@@ -14,6 +14,7 @@ from pathlib import Path
 # Support env variables from .env file if defined
 import os
 from dotenv import load_dotenv
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -50,9 +51,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
-    'channels',
-    
-
+    # 'channels',  # Removed for Vercel compatibility - WebSockets not supported
 ]
 
 
@@ -70,11 +69,13 @@ MIDDLEWARE = [
 ]
 
 # Allow requests from your React frontend (running on port 5173)
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "https://queuebite.vercel.app",  # Add your Vercel frontend domain
-]
+# Temporarily allow all origins for production debugging - tighten security after confirming the correct Vercel URL
+CORS_ALLOW_ALL_ORIGINS = True
+# CORS_ALLOWED_ORIGINS = [
+#     "http://localhost:5173",
+#     "http://127.0.0.1:5173",
+#     "https://queuebite.vercel.app",  # Add your Vercel frontend domain
+# ]
 
 # Allow Authorization header and other critical headers for CORS
 CORS_ALLOW_HEADERS = [
@@ -97,17 +98,6 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
-}
-
-# Configure Django Channels
-ASGI_APPLICATION = 'backend.asgi.application'
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
-        },
-    },
 }
 
 ROOT_URLCONF = 'backend.urls'
@@ -134,10 +124,11 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default='sqlite:///db.sqlite3',
+        conn_max_age=600,
+        conn_health_checks=True,
+    )
 }
 
 

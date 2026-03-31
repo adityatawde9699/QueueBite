@@ -60,8 +60,14 @@ const CanteenPage = () => {
       return;
     }
 
-    // Use first menu item's canteen (assumes single canteen support)
-    const canteen_id = cart[0].canteen;
+    // Validate canteen consistency and input format
+    const uniqueCanteens = [...new Set(cart.map((c) => c.canteen))];
+    if (uniqueCanteens.length > 1) {
+      alert('Please place separate orders for each canteen.');
+      return;
+    }
+
+    const canteen_id = uniqueCanteens[0];
     const items = cart.map((c) => ({ menu_item_id: c.id, quantity: c.quantity }));
 
     try {
@@ -72,7 +78,12 @@ const CanteenPage = () => {
       fetchQueue();
     } catch (err) {
       console.error('Error placing order:', err);
-      alert(err.response?.data?.error || 'Failed to place order.');
+      const serverError =
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        err.message ||
+        'Failed to place order.';
+      alert(serverError);
     }
   };
 

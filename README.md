@@ -54,7 +54,8 @@ To get a local copy up and running, follow these simple steps.
 ### **Prerequisites**
 - Python 3.10+
 - Node.js v18+ & npm
-- PostgreSQL & Redis installed and running
+- PostgreSQL (for production) or SQLite (for local development)
+- Redis (optional, for WebSockets - not required for Vercel deployment)
 
 ---
 
@@ -64,18 +65,77 @@ To get a local copy up and running, follow these simple steps.
 ```bash
 git clone https://github.com/your-username/queuebite.git
 cd queuebite
+```
 
+#### 2️⃣ Backend Setup
+```bash
 cd backend
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+
+# Copy environment file and configure
+cp .env.example .env
+# Edit .env with your settings
+
 python manage.py migrate
 python manage.py runserver
+```
 
+#### 3️⃣ Frontend Setup
+```bash
 cd ../frontend
 npm install
+
+# Copy environment file and configure
+cp .env.example .env
+# Edit .env with your API URL
+
 npm run dev
 ```
+
+---
+
+## 🚀 Deployment to Vercel
+
+### Backend Deployment
+1. **Set up PostgreSQL Database:**
+   - Use Supabase, Neon, or Vercel Postgres
+   - Get your `DATABASE_URL`
+
+2. **Deploy Backend:**
+   - Push code to GitHub
+   - Connect repository to Vercel
+   - Set environment variables in Vercel dashboard:
+     - `DATABASE_URL`: Your PostgreSQL connection string
+     - `DJANGO_SECRET_KEY`: A secure random key
+     - `DJANGO_DEBUG`: `False`
+
+3. **Run Migrations:**
+   - After deployment, run migrations locally against production DB:
+   ```bash
+   export DATABASE_URL="your-production-db-url"
+   python manage.py migrate
+   python manage.py seed_menu  # If needed
+   ```
+
+### Frontend Deployment
+1. **Deploy Frontend:**
+   - Push code to GitHub
+   - Connect repository to Vercel
+   - Set environment variable:
+     - `VITE_API_URL`: Your backend Vercel URL + `/api`
+
+2. **Update CORS:**
+   - After frontend deployment, update backend's CORS settings to allow your frontend URL
+   - Or temporarily use `CORS_ALLOW_ALL_ORIGINS = True` for testing
+
+### Important Notes
+- **Database:** SQLite won't work on Vercel due to read-only filesystem. Must use PostgreSQL.
+- **WebSockets:** Django Channels removed for Vercel compatibility. Real-time updates use polling instead.
+- **Migrations:** Run locally against production database, not on Vercel.
+
+---
 🔄 System Flow
 ```bash
 1. Customer logs in and places an order via the React frontend.

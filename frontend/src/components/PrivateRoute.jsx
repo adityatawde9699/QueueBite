@@ -11,7 +11,8 @@ const PrivateRoute = ({ allowedRoles }) => {
   }
 
   // Check if the user's role is included in the allowedRoles array
-  const hasRequiredRole = allowedRoles.some(role => user?.profile?.is_staff_member === role);
+  // user.is_staff_member is returned by API serializer (not nested profile object)
+  const hasRequiredRole = allowedRoles.some(role => user?.is_staff_member === role);
 
   if (!hasRequiredRole) {
     return <Navigate to="/" replace />;

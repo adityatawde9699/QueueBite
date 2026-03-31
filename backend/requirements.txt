@@ -3,9 +3,10 @@ Django==5.2.4
 djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 python-dotenv==1.0.1
-channels==4.1.0
-channels-redis==4.2.0
+# channels==4.1.0  # Removed for Vercel compatibility
+# channels-redis==4.2.0  # Removed for Vercel compatibility
 django-cors-headers==4.6.0
+dj-database-url==2.2.0
 Pillow==11.1.0
 scikit-learn==1.7.1
 scipy==1.16.1
