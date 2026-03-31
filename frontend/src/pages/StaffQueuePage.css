@@ -1,124 +1,407 @@
-/* --- Staff Queue Page General Styling --- */
-.staff-queue-page {
-  padding: 2rem;
-  background-color: #f3f4f6;
+/* ===================================================
+   StaffQueuePage — Premium Canteen Admin Dashboard
+   =================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+.sqp-page {
   min-height: 100vh;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+  font-family: 'Inter', sans-serif;
+  padding: 1.5rem;
+  color: #f1f5f9;
 }
 
-.page-header {
-  text-align: center;
-  margin-bottom: 2rem;
+/* ---- Header ---- */
+.sqp-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
 }
 
-.page-header h1 {
-  font-size: 2.25rem;
+.sqp-title {
+  font-size: 1.9rem;
   font-weight: 800;
-  color: #111827;
+  color: #f8fafc;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.5px;
 }
 
-.page-header p {
-  font-size: 1.1rem;
-  color: #4b5563;
-  margin-top: 0.5rem;
+.sqp-subtitle {
+  color: #94a3b8;
+  font-size: 0.95rem;
+  margin: 0;
 }
 
-/* --- Columns Container --- */
-.order-columns-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 1.5rem;
-  max-width: 1600px;
-  margin: 0 auto;
+.sqp-header-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
 }
 
-.order-column {
-  background-color: #e5e7eb;
-  border-radius: 12px;
-  padding: 1rem;
-  height: fit-content;
+.sqp-refresh-info {
+  font-size: 0.8rem;
+  color: #64748b;
 }
 
-.column-title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  padding: 0.75rem 1rem;
+.sqp-refresh-btn {
+  background: #334155;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  padding: 0.5rem 1.1rem;
   border-radius: 8px;
-  margin-bottom: 1rem;
-  color: #ffffff;
-  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+.sqp-refresh-btn:hover { background: #475569; }
+.sqp-refresh-btn:active { transform: scale(0.97); }
+.sqp-refresh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* ---- Status Bar ---- */
+.sqp-status-bar {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
 }
 
-.pending-title { background-color: #ef4444; }
-.progress-title { background-color: #f97316; }
-.ready-title { background-color: #22c55e; }
+.sqp-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #1e293b;
+  border: 2px solid;
+  border-radius: 12px;
+  padding: 0.65rem 1rem;
+  flex: 1;
+  min-width: 140px;
+  transition: transform 0.15s;
+}
+.sqp-status-pill:hover { transform: translateY(-2px); }
 
-.order-list {
+.sqp-status-pill-icon { font-size: 1.4rem; }
+
+.sqp-status-pill-label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sqp-status-pill-count {
+  font-size: 1.3rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* ---- Tabs ---- */
+.sqp-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #1e293b;
+  padding-bottom: 0.5rem;
+}
+
+.sqp-tab {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s;
+}
+.sqp-tab:hover { color: #e2e8f0; background: #1e293b; }
+.sqp-tab-active {
+  color: #f8fafc;
+  background: #334155;
+}
+
+/* ---- Loading & Error ---- */
+.sqp-loading {
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 4rem;
   gap: 1rem;
-  min-height: 300px; /* To give the column some initial height */
+  color: #94a3b8;
 }
 
-/* --- Order Card Styling --- */
-.order-card {
-  background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  padding: 1rem;
-  transition: transform 0.2s ease;
+.sqp-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #334155;
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: sqp-spin 0.8s linear infinite;
 }
 
-.order-card:hover {
-    transform: scale(1.02);
+@keyframes sqp-spin {
+  to { transform: rotate(360deg); }
 }
 
-.card-header {
+.sqp-error {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #450a0a;
+  border: 1px solid #dc2626;
+  color: #fca5a5;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.sqp-error button {
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---- Kanban Board ---- */
+.sqp-kanban {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+/* ---- Column ---- */
+.sqp-column {
+  background: #1e293b;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.sqp-col-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #f3f4f6;
-  padding-bottom: 0.75rem;
-  margin-bottom: 0.75rem;
-}
-
-.order-token {
-  font-size: 1.5rem;
+  padding: 0.85rem 1.1rem;
   font-weight: 700;
-  color: #1f2937;
+  font-size: 0.95rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.item-list {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 1rem 0;
-    font-size: 0.95rem;
-    color: #4b5563;
+.sqp-col-badge {
+  background: rgba(255,255,255,0.25);
+  border-radius: 20px;
+  padding: 2px 10px;
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
-.item-list li {
-    padding: 0.25rem 0;
-}
-
-.card-actions {
+.sqp-col-body {
+  padding: 0.85rem;
   display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  min-height: 120px;
 }
 
-.action-btn {
-  width: 100%;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 6px;
-  color: #ffffff;
+.sqp-empty-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #475569;
+  font-size: 0.85rem;
+  border: 2px dashed #334155;
+  border-radius: 10px;
+}
+
+/* ---- Order Card ---- */
+.sqp-card {
+  background: #0f172a;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  transition: transform 0.15s, box-shadow 0.15s;
+  border-left: 0;
+}
+
+.sqp-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+}
+
+.sqp-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.6rem;
+}
+
+.sqp-token-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sqp-token {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #f1f5f9;
+  letter-spacing: -0.5px;
+  line-height: 1;
+}
+
+.sqp-order-id {
+  font-size: 0.72rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.sqp-time-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 1px;
+}
+
+.sqp-time {
+  font-size: 0.85rem;
   font-weight: 600;
-  font-size: 0.9rem;
+  color: #94a3b8;
+}
+
+.sqp-date {
+  font-size: 0.72rem;
+  color: #475569;
+}
+
+.sqp-customer {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #1e293b;
+}
+
+/* ---- Items ---- */
+.sqp-items {
+  margin-bottom: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sqp-item-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.sqp-item-qty {
+  background: #1e293b;
+  color: #94a3b8;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.sqp-item-name {
+  color: #cbd5e1;
+  font-weight: 500;
+}
+
+.sqp-item-price {
+  color: #64748b;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
+.sqp-expand-btn {
+  background: none;
+  border: none;
+  color: #6366f1;
+  font-size: 0.78rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: opacity 0.3s;
+  padding: 0;
+  margin-top: 4px;
+  text-align: left;
+  transition: color 0.15s;
+}
+.sqp-expand-btn:hover { color: #818cf8; }
+
+/* ---- Total ---- */
+.sqp-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #1e293b;
+  padding-top: 0.6rem;
+  margin-bottom: 0.85rem;
+  font-size: 0.85rem;
+  color: #64748b;
 }
 
-.action-btn:hover {
-  opacity: 0.85;
+.sqp-total-amount {
+  font-size: 1rem;
+  font-weight: 800;
+  color: #f1f5f9;
 }
 
-.progress-btn { background-color: #f97316; }
-.ready-btn { background-color: #22c55e; }
-.served-btn { background-color: #6b7280; }
+/* ---- Action Buttons ---- */
+.sqp-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.sqp-btn {
+  flex: 1;
+  border: none;
+  padding: 0.6rem 0.75rem;
+  border-radius: 7px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  color: #fff;
+}
+.sqp-btn:hover { opacity: 0.88; }
+.sqp-btn:active { transform: scale(0.97); }
+.sqp-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.sqp-btn-next { flex: 2; }
+
+.sqp-btn-cancel {
+  background: #1e293b;
+  color: #ef4444;
+  border: 1px solid #ef4444;
+  flex: 1;
+}
+.sqp-btn-cancel:hover { background: #450a0a; }
+
+/* ---- Responsive ---- */
+@media (max-width: 640px) {
+  .sqp-page { padding: 1rem; }
+  .sqp-title { font-size: 1.4rem; }
+  .sqp-status-bar { gap: 0.5rem; }
+  .sqp-status-pill { min-width: 120px; padding: 0.5rem 0.75rem; }
+}

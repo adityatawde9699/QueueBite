@@ -2,7 +2,7 @@ import axios from 'axios';
 import useAuthStore from '../store/authStore';
 
 // Set the base URL for your Django backend
-const API_URL = 'https://queuebite-backend.onrender.com/api';
+const API_URL = 'https://queuebitebackend.vercel.app/api';
 
 const api = axios.create({
   baseURL: API_URL,
