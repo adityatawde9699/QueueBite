@@ -14,7 +14,7 @@ const Header = () => {
     <header className="header">
       <div className="header-content">
         <Link to="/" className="header-logo">
-          <img src="/logo.svg" alt="logo" />
+          <img src="/logo2.svg" alt="logo" />
         </Link>
         <nav className="header-nav">
           {isLoggedIn ? (
