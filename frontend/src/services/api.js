@@ -2,7 +2,7 @@ import axios from 'axios';
 import useAuthStore from '../store/authStore';
 
 // Set the base URL for your Django backend
-const API_URL = 'https://queuebite-backend.onrender.com/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000/api';
 
 const api = axios.create({
   baseURL: API_URL,
@@ -35,7 +35,7 @@ api.interceptors.response.use(
     const { refreshToken, setTokens, logout } = useAuthStore.getState();
 
     // Check if the error is due to an expired token and we haven't retried yet
-    if (error.response.status === 401 && !originalRequest._retry) {
+    if (error.response && error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       if (refreshToken) {
